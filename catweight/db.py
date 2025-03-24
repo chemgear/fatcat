@@ -10,14 +10,21 @@ from typing import List, Tuple, Optional, Dict, Any
 class CatWeightDatabase:
     """Database handler for cat food weight tracking."""
     
-    def __init__(self, db_path="cat_weight.db"):
+    def __init__(self, db_path="/opt/db/fatcat.db"):
         """Initialize the database connection and create tables if they don't exist."""
         self.db_path = db_path
         self.conn = None
         self.cursor = None
+        self._ensure_db_directory_exists()
         self.connect()
         self.create_tables()
         
+    def _ensure_db_directory_exists(self):
+        """Ensure the directory for the database file exists."""
+        db_dir = os.path.dirname(self.db_path)
+        if db_dir and not os.path.exists(db_dir):
+            os.makedirs(db_dir, exist_ok=True)
+            
     def connect(self):
         """Connect to the SQLite database."""
         self.conn = sqlite3.connect(self.db_path)
